@@ -35,24 +35,24 @@ public class JwtFilter extends AuthenticatingFilter {
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String jwt = request.getHeader("Authorization");
-        if(StringUtils.isNotEmpty(jwt)){
+        String token = request.getHeader("Authorization");
+        if(StringUtils.isNotEmpty(token)){
             return null;
         }
 
-        return new JwtToken(jwt);
+        return new JwtToken(token);
     }
 
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-        HttpServerRequest request = (HttpServerRequest) servletRequest;
-        String jwt = request.getHeader("Authorization");
-        if(StringUtils.isNotEmpty(jwt)){
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        String token = request.getHeader("Authorization");
+        if(StringUtils.isEmpty(token)){
             return true;
         }else {
             //校验jwt
 
-            Claims claim = jwtUtils.getClaimByToken(jwt);
+            Claims claim = jwtUtils.getClaimByToken(token);
             if (claim == null || jwtUtils.isTokenExpired(claim.getExpiration())){
                 throw new ExpiredCredentialsException("token已失效，请重新登录");
             }
@@ -81,4 +81,5 @@ public class JwtFilter extends AuthenticatingFilter {
 
         return false;
     }
+
 }
