@@ -1,6 +1,7 @@
 package com.markerhub.config;
 
 import com.markerhub.shiro.AccountRealm;
+import com.markerhub.shiro.JwtFilter;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -14,6 +15,7 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,6 +31,10 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
+
+    @Autowired
+    JwtFilter jwtFilter;
+
     @Bean
     public SessionManager sessionManager(RedisSessionDAO redisSessionDAO) {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
@@ -61,7 +67,7 @@ public class ShiroConfig {
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         Map<String, String> filterMap = new LinkedHashMap<>();
-        filterMap.put("/**", "authc"); // 主要通过注解方式校验权限
+        filterMap.put("/**", "jwt"); // 主要通过注解方式校验权限
         chainDefinition.addPathDefinitions(filterMap);
         return chainDefinition;
     }
@@ -70,9 +76,9 @@ public class ShiroConfig {
                                                          ShiroFilterChainDefinition shiroFilterChainDefinition) {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager);
-//        Map<String, Filter> filters = new HashMap<>();
-//        filters.put("jwt", jwtFilter);
-//        shiroFilter.setFilters(filters);
+        Map<String, Filter> filters = new HashMap<>();
+        filters.put("jwt", jwtFilter);
+        shiroFilter.setFilters(filters);
         Map<String, String> filterMap = shiroFilterChainDefinition.getFilterChainMap();
         shiroFilter.setFilterChainDefinitionMap(filterMap);
         return shiroFilter;
