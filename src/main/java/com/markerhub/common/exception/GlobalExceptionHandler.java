@@ -37,4 +37,15 @@ public class GlobalExceptionHandler {
         return Result.fail(e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public Result handler(MethodArgumentNotValidException e){
+        log.error("实体校验异常：---------------");
+        BindingResult bindingResult = e.getBindingResult();
+        ObjectError objectError = bindingResult.getAllErrors().stream().findFirst().get();
+
+        return Result.fail(objectError.getDefaultMessage());
+    }
+
+
 }
