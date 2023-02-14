@@ -37,12 +37,12 @@ public class JwtFilter extends AuthenticatingFilter {
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String token = request.getHeader("Authorization");
-        if(StringUtils.isNotEmpty(token)){
+        String jwt = request.getHeader("Authorization");
+        if(StringUtils.isEmpty(jwt)){
             return null;
         }
 
-        return new JwtToken(token);
+        return new JwtToken(jwt);
     }
 
     @Override
@@ -59,9 +59,8 @@ public class JwtFilter extends AuthenticatingFilter {
                 throw new ExpiredCredentialsException("token已失效，请重新登录");
             }
 
-            //执行登录
         }
-
+        //执行登录
         return executeLogin(servletRequest,servletResponse);
     }
 
