@@ -75,4 +75,16 @@ public class BlogController {
         return Result.succ(null);
     }
 
+    @RequiresAuthentication
+    @DeleteMapping  ("/blog/delete/{id}")
+    public Result delete(@PathVariable Long id){
+
+
+        boolean b = blogService.removeById(id);
+        if (!b){
+            return Result.fail("删除失败");
+        }
+
+        return Result.succ(null);
+    }
 }
