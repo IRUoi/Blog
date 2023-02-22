@@ -76,7 +76,7 @@ public class BlogController {
     }
 
     @RequiresAuthentication
-    @DeleteMapping  ("/blog/delete/{id}")
+    @PostMapping  ("/blog/delete/{id}")
     public Result delete(@PathVariable Long id){
 
 

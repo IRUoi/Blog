@@ -57,10 +57,10 @@ public class AccountController {
     }
 
     @RequiresAuthentication
-    @GetMapping("/logout")
+    @RequestMapping("/logout")
     public Result logout(){
         SecurityUtils.getSubject().logout();
-        return Result.succ(null);
+        return Result.succ("注销成功");
     }
 
 }
